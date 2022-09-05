@@ -11,15 +11,21 @@ int main(){
 
     cin >> n;
     people_per = new int[n];
-    for(int i = 0; i < n; i++) cin >> *people_per;
+    for(int i = 0; i < n; i++) cin >> *(people_per + i);
     cin >> master >> slave;
 
     for(int i = 0; i < n; i++){
         int thisp = people_per[i];
+        if(thisp - master < 0){
+            result++;
+            continue;
+        }
         int leftover = (thisp - master) % slave;
         int divis = (thisp - master) / slave;
+        divis++; // 검사장
         if(leftover != 0) divis++;
         result += (long long)divis;
+        //cout << divis << endl;
     }
 
 
