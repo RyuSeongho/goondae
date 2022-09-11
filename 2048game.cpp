@@ -6,11 +6,6 @@ class node{
     public:
         int* matrix;
         int degree;
-
-        /*node(){
-            this.matrix = new int(n*n);
-            this.degree = 0;
-        }*/
 };
 
 void _print(int* matrix, int n){
@@ -32,7 +27,7 @@ void _copy(int* orgmatrix, int* matrix, int n){
 bool _isValid(int* matrix, int n, int limit, int db_size){
     int sum = 0;
     int valid_limit = limit;
-    for(int i=0; i < 5 - db_size; i++) {
+    for(int i=0; i < 4 - db_size; i++) {
         if(valid_limit <= 2) break;
         valid_limit /= 2;
     }
@@ -52,23 +47,29 @@ int _maxof(int* matrix, int n){
 }
 
 void _doProgress(int* matrix, int n){
+    
     vector<int> _stack;
     vector<int> _finalstack;
     for(int i=0; i < n; i++){
+        bool has_absorbed = false;
         for(int j=0; j < n; j++){
             if(*(matrix+(n*i)+j) == 0) continue;
             _stack.push_back(*(matrix+(n*i)+j));
         }
         while(!_stack.empty()){
-            if(!_finalstack.empty() && _finalstack.back() == _stack.at(0)){
+            if(!_finalstack.empty() && _finalstack.back() == _stack.at(0) && !has_absorbed){
                 _finalstack.back() *= 2;
+                has_absorbed = true;
             }
-            else _finalstack.push_back(_stack.at(0));
+            else {
+                _finalstack.push_back(_stack.at(0));
+                has_absorbed = false;
+            }
             _stack.erase(_stack.begin());
         }
         for(int j = 0; j < n; j++){
             if(_finalstack.empty()) {
-                *(matrix+(n*i)+j) == 0;
+                *(matrix+(n*i)+j) = 0;
                 continue;
             }
             *(matrix+(n*i)+j) = _finalstack.at(0);
@@ -82,7 +83,7 @@ void _turnProgress(int* matrix, int n)
     int result_matrix[n*n];
     for(int i=0; i < n; i++){
         for(int j=0; j < n; j++)
-        *(result_matrix+(n*i)+j) = *(result_matrix+(n*(n-1-j))+i);
+        *(result_matrix+(n*i)+j) = *(matrix+(n*(n-1-j))+i);
     }
     _copy(result_matrix, matrix, n); // 배열복사
 }
@@ -99,42 +100,64 @@ int main(){
     }
     node* db = new node[5];
     for(int i=0; i < 5; i++){
-        db[i].matrix = new int(n*n);
+        db[i].matrix = new int[n*n];
         db[i].degree = 0;
     }
 
     _copy(curr_matrix, db[0].matrix, n);
-    _print(curr_matrix, n);
-
     int limit = _maxof(curr_matrix, n) * 2; //극복해야 할 숫자
+    //cout << "시작 리미트" << limit;
+    //_print(curr_matrix, n);
+
+    
 
     bool flag = true;
     int a = 0;
 
     while(flag){
-        _print(curr_matrix, n);
+        
         if(_isValid(curr_matrix, n, limit, db_size)){
-            if(db_size >= 3){ //이번에 만지고 있는게 index 4짜리 그러니까 5번째 거
-                if(_maxof(curr_matrix, n) >= limit) limit = _maxof(curr_matrix, n);
+            if(db_size > 3){ //이번에 만지고 있는게 index 4짜리 그러니까 5번째 거(마지막)
+                if(_maxof(curr_matrix, n) >= limit) {
+                    
+                    limit = _maxof(curr_matrix, n) * 2;
+                    //cout << "신기록 갱신" << limit;
+                }
+                //cout << "끝에 도달";
+                
             }
             else{
                 
                 _doProgress(curr_matrix, n); // 기능 실행
                 _copy(curr_matrix ,db[++db_size].matrix, n); // 기능 한 단계 실행 후 저장
+                db[db_size].degree = 0;
+                //cout << "[" << db_size << "]";
             }
         }
         else{
-            if(db[db_size].degree < 3){
-                db[db_size].degree++;
-                _turnProgress(curr_matrix, n);
+            
+            db_size--;
+            
+            //cout << "전";
+            while(db_size > 0 && db[db_size].degree >= 3) {
+                db_size--; //계속 전게 끝까지 돌아가있으면 뒤로 계속 돌아가기
+                //cout << "전";
             }
-            else{
-                if(db_size > 0) _copy(curr_matrix, db[--db_size].matrix, n);
-                else flag = false;
-            }
+            if(db[0].degree >= 3 || db_size < 0) break;
+            db[db_size].degree++;
+            _turnProgress(db[db_size].matrix, n); //전거 먼저 돌려놓기
+            _copy(db[db_size].matrix, curr_matrix, n); // 전거 불러오기
+            
+            //cout << "거 돌리고 불러오기";
+            
         }
-        a++;
-        if(a==100) flag = false;
+        //_print(curr_matrix, n);
+        
+        
     }
+
+  cout << limit / 2;
+
+  return 0;
 
 }
