@@ -27,7 +27,7 @@ void _copy(int* orgmatrix, int* matrix, int n){
 bool _isValid(int* matrix, int n, int limit, int db_size){
     int sum = 0;
     int valid_limit = limit;
-    for(int i=0; i < 4 - db_size; i++) {
+    for(int i=0; i < 5 - db_size; i++) {
         if(valid_limit <= 2) break;
         valid_limit /= 2;
     }
@@ -98,16 +98,15 @@ int main(){
     for(int i=0; i < n*n; i++) {
         cin >> *(curr_matrix+i);
     }
-    node* db = new node[5];
-    for(int i=0; i < 5; i++){
+    node* db = new node[6];
+    for(int i=0; i < 6; i++){
         db[i].matrix = new int[n*n];
         db[i].degree = 0;
     }
 
     _copy(curr_matrix, db[0].matrix, n);
     int limit = _maxof(curr_matrix, n) * 2; //극복해야 할 숫자
-    //cout << "시작 리미트" << limit;
-    //_print(curr_matrix, n);
+    
 
     
 
@@ -117,13 +116,13 @@ int main(){
     while(flag){
         
         if(_isValid(curr_matrix, n, limit, db_size)){
-            if(db_size > 3){ //이번에 만지고 있는게 index 4짜리 그러니까 5번째 거(마지막)
+            if(db_size > 4){ //이번에 만지고 있는게 index 5짜리 그러니까 마지막 거
                 if(_maxof(curr_matrix, n) >= limit) {
                     
                     limit = _maxof(curr_matrix, n) * 2;
-                    //cout << "신기록 갱신" << limit;
+                    
                 }
-                //cout << "끝에 도달";
+                
                 
             }
             else{
@@ -138,20 +137,18 @@ int main(){
             
             db_size--;
             
-            //cout << "전";
+            
             while(db_size > 0 && db[db_size].degree >= 3) {
                 db_size--; //계속 전게 끝까지 돌아가있으면 뒤로 계속 돌아가기
-                //cout << "전";
+                
             }
             if(db[0].degree >= 3 || db_size < 0) break;
             db[db_size].degree++;
             _turnProgress(db[db_size].matrix, n); //전거 먼저 돌려놓기
             _copy(db[db_size].matrix, curr_matrix, n); // 전거 불러오기
             
-            //cout << "거 돌리고 불러오기";
             
         }
-        //_print(curr_matrix, n);
         
         
     }
