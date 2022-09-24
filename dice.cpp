@@ -84,11 +84,10 @@ int main(){
             cin >> matrix[i][j];
         }
     }
-    for(int i=0; i<k; i++) cin >> roll[i];
     for(int i=0; i<k; i++){
-        int input = roll[i];
+        int input;
 
-        //cout << "이번 명령:" << input << endl;
+        cin >> input;
 
         switch(input){
             case 1:
