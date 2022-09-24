@@ -1,35 +1,12 @@
+#include <iostream>
+using namespace std;
+
 class dice{
 private:
-    int x_pos = 1;
-    int y_pos = 1;
     int number[3][4]; //평면도
 
-    void good_pos(){
-        if(x_pos < 0) x_pos += 4;
-        else if(x_pos > 3) x_pos -= 4;
-        if(y_pos < 0) y_pos += 4;
-        if(y_pos > 2) {
-            x_pos == 3;
-            y_pos == 1;
-        }
-    }
-
-    void find_vert(){
-        good_pos();
-        if(number[y_pos][x_pos] == -1){
-            y_pos = 1;
-        }
-    }
-    void find_horz(){
-        good_pos();
-        if(number[y_pos][x_pos] == -1){
-            x_pos = 1;
-        }
-    }
-
-
 public:
-    roll(){
+    dice(){
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 4; j++){
                 if(i == 1 || j == 1) number[i][j] = 0;
@@ -41,46 +18,49 @@ public:
 
 
     int roll(int dir){
+        int temp;
         switch(dir){
             case 1: // 동
-                x_pos++;
-                find_vert();
+                temp = number[1][0];
+                for(int i=0; i< 3; i++){
+                    number[1][i] = number[1][i+1];
+                }
+                number[1][3] = temp;
                 break;
             case 2: // 서
-                x_pos--;
-                find_vert();
+                temp = number[1][3];
+                for(int i=3; i > 0; i--){
+                    number[1][i] = number[1][i - 1];
+                }
+                number[1][0] = temp;
                 break;
             case 3: // 북
-                y_pos--;
-                find_horz();
+                temp = number[1][3];
+                number[1][3] = number[2][1];
+                number[2][1] = number[1][1];
+                number[1][1] = number[0][1];
+                number[0][1] = temp;
                 break;
             case 4: // 남
-                y_pos++;
-                find_horz();
+                temp = number[1][3];
+                number[1][3] = number[0][1];
+                number[0][1] = number[1][1];
+                number[1][1] = number[2][1];
+                number[2][1] = temp;
                 break;
             default:
                 return -1;
                 break;
         }
-        return number[y_pos][x_pos];
+        return number[1][1];
     }
 
     void copy(int numb){
-        number[y_pos][x_pos] == numb;
+        number[1][1] = numb;
     }
 
     int get(){
-        int org_x = x_pos;
-        int org_y = y_pos;
-        x_pos += 2;
-        find_vert();
-
-        int rtr = number[y_pos][x_pos];
-        
-        x_pos = org_x;
-        y_pos = org_y;
-
-        return rtr;
+        return number[1][3];
     }
 };
 
@@ -94,8 +74,6 @@ int roll[1000]; //굴리기 방향 저장
 
 dice d; // 주사위
 
-#include <iostream>
-using namespace std;
 
 
 
@@ -106,41 +84,43 @@ int main(){
             cin >> matrix[i][j];
         }
     }
+    for(int i=0; i<k; i++) cin >> roll[i];
     for(int i=0; i<k; i++){
-        int input;
-        cin >> input;
+        int input = roll[i];
+
+        //cout << "이번 명령:" << input << endl;
 
         switch(input){
             case 1:
-                x++;
+                y++;
                 break;
             case 2:
-                x--;
-                break;
-            case 3:
                 y--;
                 break;
+            case 3:
+                x--;
+                break;
             case 4:
-                y++;
+                x++;
                 break;
             default:
                 break;
         }
-        if(x >= m) x == m;
-        else if(x < 0) x == 0;
-        else if(y >= n) y == n;
-        else if(y < 0) y == 0;
+        if(x >= n) x = n - 1;
+        else if(x < 0) x = 0;
+        else if(y >= m) y = m - 1;
+        else if(y < 0) y = 0;
         else {
             int current = matrix[x][y]; //칸에 적힌 숫자
             int result = d.roll(input); //주사위에 적힌 숫자
             if(current == 0){
-                current = result; // 주사위를 칸에 복사
+                matrix[x][y] = result; // 주사위를 칸에 복사
             }
             else{
                 d.copy(current);
                 matrix[x][y] = 0;
             }
-            cout << d.get();
+            cout << d.get() << endl;
         }
     }
 
