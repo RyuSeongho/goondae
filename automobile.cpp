@@ -26,24 +26,28 @@ void one(){
     if(matrix[x+xdif][y+ydif] == 0){ //그냥 도로라면
         d = _d;
         s = 0;
-        matrix[x][y] = 2;
+        
         x = x + xdif;
         y = y + ydif;
         //cout << "좌회전하고 전진합니다" << endl;
+        matrix[x][y] = 2;
         a++;
         one();
         
     }
     else{
         d = _d;
-        //cout << "좌회전" << s << "번"<< endl;
+        
         two();
     }
 }
 
 void two(){
-    if(s++ >= 4) three();
+    s++;
+    //cout << "전진" << s << "번 실패"<< endl;
+    if(s >= 4) three();
     else one();
+    
 }
 
 void three(){
@@ -59,13 +63,13 @@ void three(){
             matrix[x][y] = 2;
             a++;
             one();
-            cout << "후진" << endl;
+            //cout << "후진" << endl;
             break;
         case 1: //인도라면
             four();
             break;
         case 2: //이미 간 길이라면
-            cout << "후진" << endl;
+            //cout << "후진" << endl;
             one();
             
             break;
