@@ -6,8 +6,6 @@ char chair[5][8];
 
 int k;
 
-int pc[100];
-int pd[100];
 
 void print(){
     for(int i=1; i < 5; i++){
