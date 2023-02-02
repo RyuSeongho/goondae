@@ -11,9 +11,19 @@ int diriarr[4] = {-1,0,1,0};
 int dirjarr[4] = {0,1,0,-1};
 int mmin = 64;
 
+void printcalplain(){
+    for(int i =0; i< n; i++){
+        for(int j=0; j<m; j++){
+            cout << calplain[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
 void init(){
     for(int i =0; i< n; i++){
-        for(int j=0; j<n; j++){
+        for(int j=0; j<m; j++){
             calplain[i][j] = plain[i][j];
         }
     }
@@ -22,15 +32,16 @@ void init(){
 int countleft(){
     int sum = 0;
     for(int i =0; i< n; i++){
-        for(int j=0; j<n; j++){
+        for(int j=0; j<m; j++){
             if(calplain[i][j] == 0) sum++;
         }
     }
+    return sum;
 }
 
 void move(int i, int j, int d){
     d--;
-    while(i >= 0 && j >= 0 && i < n && j < n){
+    while(i >= 0 && j >= 0 && i < n && j < m){
         i += diriarr[d];
         j += dirjarr[d];
         if(calplain[i][j] == 0) calplain[i][j] = 7;
@@ -46,13 +57,8 @@ int rotate(int org, int power){
 }
 
 void calleft(){
-    for(int i=0; i<idx; i++ ){
-        cout << dir[i] << " ";
-    }
-    cout << endl;
-
+    init();
     for(int i =0; i< idx; i++){
-        init();
         int addi = pos[i] / 8;
         int addj = pos[i] % 8;
         switch(plain[addi][addj]){
@@ -81,9 +87,12 @@ void calleft(){
             default:
                 break;
         }
-        int cleft = countleft();
-        if(cleft < mmin) mmin = cleft;
     }
+    
+    int cleft = countleft();
+    //cout << "[!]" << cleft << " " << endl;
+    if(cleft < mmin) mmin = cleft;
+    if(cleft > 20) printcalplain();
 }
 
 void process(int i){
@@ -104,7 +113,7 @@ void process(int i){
 int main() {
     cin >> n >> m;
     for(int i =0; i< n; i++){
-        for(int j=0; j<n; j++){
+        for(int j=0; j<m; j++){
             cin >> plain[i][j];
             if(plain[i][j] >= 1 && plain[i][j] <= 5){
                 dir[idx] = 1;
