@@ -2,8 +2,8 @@
 using namespace std;
 
 int n, m;
-int plain[8][8];
-int calplain[8][8];
+int plain[9][9];
+int calplain[9][9];
 int dir[8] = {0};
 int pos[8] = {0};
 int idx = 0;
@@ -90,9 +90,7 @@ void calleft(){
     }
     
     int cleft = countleft();
-    //cout << "[!]" << cleft << " " << endl;
     if(cleft < mmin) mmin = cleft;
-    if(cleft > 20) printcalplain();
 }
 
 void process(int i){
