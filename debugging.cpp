@@ -3,6 +3,7 @@
 using namespace std;
 
 int plain[30][10] = {0};
+//int rslt = -1;
 int n, m, h;
 int result = -1;
 
@@ -77,10 +78,14 @@ void delete_line(int ind){
     
     plain[getind1(ind)][getind2(ind)] = 0;
 }
+bool checkNotWorthIt(int leftline){
+    if(leftline <= result) return true;
+    return false;
+}
 
 void dfs(int ind, int leftline){
-    
-    if(checkSuccess() && result < leftline) result = leftline;
+    if(checkNotWorthIt(leftline)) return;
+    if(checkSuccess()) result = leftline;
     if(checkOutBound(ind)) return;
     if(checkNoLineLeft(leftline)) return;
 
