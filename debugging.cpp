@@ -3,9 +3,8 @@
 using namespace std;
 
 int plain[30][10] = {0};
-//int rslt = -1;
 int n, m, h;
-int ptr1, ptr2;
+int result = -1;
 
 void printplain(){
     for(int i=0; i < h; i++){
@@ -15,7 +14,7 @@ void printplain(){
     cout << endl;
 }
 
-bool check(){
+bool checkSuccess(){
     for(int i=0; i < n; i++){
         int curr = i;
         for(int j=0; j < h; j++){
@@ -26,39 +25,71 @@ bool check(){
     return true;
 }
 
-void ptrinit(){
-    ptr1 = 0;
-    ptr2 = 0;
+int getind1(int ind){
+    return ind / n;
+}
+int getind2(int ind){
+    return ind % n;
 }
 
-bool ptrplus(){
-    if(ptr2++ >= n){
-        ptr2 = 0;
-        ptr1++;
-    }
-    if(ptr1 >= m) return false;
-    return true;
+bool checkOutBound(int ind){
+    if(ind >= n * h) return true;
+    return false;
 }
 
-bool process(int left){
-    if(left == 0 && check()) {
-        return true;
-    }
+bool checkNoLineLeft(int leftline){
+    if(leftline <= 0) return true;
+    return false;
+}
+
+bool checkOutOfSecondArrayBound(int ind2){
+    if(ind2 >= n) return true;
+    return false;
+}
+
+bool checkCannotCreateLine(int ind){
+    if(checkOutBound(ind)) return true;
+    if(checkOutOfSecondArrayBound(getind2(ind) + 1)) return true;
+    if(plain[getind1(ind)][getind2(ind)] !=0) return true;
+
+    ind++;
+
+    if(checkOutBound(ind)) return true;
+    if(plain[getind1(ind)][getind2(ind)] !=0) return true;
+
+    return false;
+}
+
+void create_line(int ind, int& leftline){
+    leftline--;
+
+    plain[getind1(ind)][getind2(ind)] = 1;
+
+    ind++;
     
-    if(plain[ptr1][ptr2] != 0) {
-        if(!ptrplus()) return false;
-        process(left);
-    } else if(plain[ptr1][ptr2+1] == 0){
-        plain[ptr1][ptr2] = 1;
-        plain[ptr1][ptr2+1] = -1;
-        if(!ptrplus()) return false;
-        if(!ptrplus()) return false;
-        printplain();
-        process(left - 1);
-    } else{
-        if(!ptrplus()) return false;
-    }
+    plain[getind1(ind)][getind2(ind)] = -1;
+}
 
+void delete_line(int ind){
+    plain[getind1(ind)][getind2(ind)] = 0;
+
+    ind++;
+    
+    plain[getind1(ind)][getind2(ind)] = 0;
+}
+
+void dfs(int ind, int leftline){
+    
+    if(checkSuccess() && result < leftline) result = leftline;
+    if(checkOutBound(ind)) return;
+    if(checkNoLineLeft(leftline)) return;
+
+    dfs(ind+1, leftline);
+    if(checkCannotCreateLine(ind)) return;
+    create_line(ind, leftline);
+    //printplain();
+    dfs(ind+2, leftline);
+    delete_line(ind);
 }
 
 int main() {
@@ -69,15 +100,10 @@ int main() {
         plain[t1-1][t2-1] = 1;
         plain[t1-1][t2-1+1] = -1;
     }
-    printplain();
-    for(int i = 0; i < 4; i++){
-        ptrinit();
-        if(process(i)) {
-            cout << i;
-            return 0;
-        }
-    }
 
-    cout << -1;
+    dfs(0, 3);
+
+    if(result != -1) result = 3- result;
+    cout << result;
     return 0;
 }
