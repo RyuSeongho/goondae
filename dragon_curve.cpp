@@ -2,12 +2,14 @@
 using namespace std;
 
 int n;
-int x[20];
-int y[20];
-int d[20];
-int g[20];
+int sx[20];
+int sy[20];
+int sd[20];
+int sg[20];
+
 
 int plain[100][100] = {0};
+
 
 
 void rotatePoint(int& x, int& y, int crix, int criy){
@@ -21,13 +23,20 @@ void rotatePoint(int& x, int& y, int crix, int criy){
 
 }
 
+void getNewCriterionPoint(int& sx, int& sy, int crix, int criy){
+    rotatePoint(sx, sy, crix, criy);
+}
+
 int main() {
-    int p, m, ga, na;
-    cin >> p >> m >> ga >> na;
-    rotatePoint(p, m, ga, na);
-    return 0;
+    int d = 0;
     cin >> n;
-    for(int i=0; i < n; i++) cin >> x[i] >> y[i] >> d[i] >> g[i];
+    for(int i=0; i < n; i++) {
+        
+        cin >> sx[i] >> sy[i] >> sd[i] >> sg[i];
+        
+    }
+    
+
 
 
     return 0;
