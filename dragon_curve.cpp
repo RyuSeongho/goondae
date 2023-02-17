@@ -5,9 +5,7 @@ using namespace std;
 int n;
 
 class Point{
-
     public:
-
         int x;
         int y;
 
@@ -92,7 +90,6 @@ void makeFirstPoint(int x, int y, int d, int g){
     
     int _x = x+dx[d];
     int _y = y+dy[d];
-    cout << x << y << " " << _x << _y << endl;
     plain[x][y] = idx;
     plain[_x][_y] = idx;
 
@@ -102,8 +99,34 @@ void makeFirstPoint(int x, int y, int d, int g){
     makePointProcess(_x, _y, g);
 }
 
+bool checkIsSquare(int x, int y){
+    if(plain[x+1][y] == 0) return false;
+    if(plain[x+1][y+1] == 0) return false;
+    if(plain[x][y+1] == 0) return false;
+    return true;
+}
+
+bool checkOutOfBound(int x, int y){
+    if(x < 0 || y < 0) return true;
+    if(x >= 100 || y >= 100) return true;
+    return false;
+}
+
 void dfs(int x, int y){
-    dfs()
+    
+    if(checkOutOfBound(x, y)) return;
+    if(plain[x][y] <= 0) return;
+    
+    //cout << x << " " << y << endl;
+
+    plain[x][y] = -1;
+
+    for(int i=0; i<4; i++){
+        dfs(x+dx[i], y+dy[i]);
+    }
+    
+    if(checkIsSquare(x, y)) rslt++;
+
 }
 
 int main() {
@@ -118,9 +141,12 @@ int main() {
         makeFirstPoint(x, y, d, g);
     }
 
+    //printPlain();
+
     for(int i=1; i <= idx; i++){
         dfs(sp[i].x, sp[i].y);
     }
-    printPlain();
+    
+    cout << rslt;
     return 0;
 }
