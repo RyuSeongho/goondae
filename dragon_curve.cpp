@@ -1,15 +1,45 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
 int n;
-int sx[20];
-int sy[20];
-int sd[20];
-int sg[20];
 
+class Point{
+
+    public:
+
+        int x;
+        int y;
+
+
+    Point(int x, int y){
+        this->x = x;
+        this->y = y;
+    }
+};
+
+vector<Point> v;
+vector<Point> sp;
+
+
+int dx[4]={0,-1,0,1};
+int dy[4]={1,0,-1,0};
 
 int plain[100][100] = {0};
 
+int idx = 0; //start with 1
+
+int rslt = 0;
+
+
+void printPlain(){
+    for(int i=0; i < 20; i++){
+        for(int j=0; j < 20; j++){
+            cout << plain[i][j];
+        }
+        cout << endl;
+    }
+}
 
 
 void rotatePoint(int& x, int& y, int crix, int criy){
@@ -19,25 +49,78 @@ void rotatePoint(int& x, int& y, int crix, int criy){
     x = crix + dy;
     y = criy - dx;
 
-    cout << x << " " << y;
-
 }
 
-void getNewCriterionPoint(int& sx, int& sy, int crix, int criy){
-    rotatePoint(sx, sy, crix, criy);
+void makePointProcess(int crix, int criy, int g){
+    if(g <= 0) {
+        v.clear();
+        return;
+    }
+
+    int size = v.size();
+    int rx, ry;
+    int indexOfStartPoint = plain[crix][criy];
+    for(int i=0; i < size; i++){
+        rx = v[i].x;
+        ry = v[i].y;
+
+        if(crix == rx && criy == ry) continue;
+
+        rotatePoint(rx, ry, crix, criy);
+        v.push_back(Point(rx, ry));
+
+        plain[rx][ry] = indexOfStartPoint;
+    }
+
+    Point startPointOfThis = sp[indexOfStartPoint];
+
+    rx = startPointOfThis.x;
+    ry = startPointOfThis.y;
+
+    rotatePoint(rx, ry, crix, criy);
+
+    crix = rx;
+    criy = ry;
+
+    makePointProcess(crix, criy, g - 1);
+    
+}
+
+
+void makeFirstPoint(int x, int y, int d, int g){
+    sp.push_back(Point(x,y));
+    
+    int _x = x+dx[d];
+    int _y = y+dy[d];
+    cout << x << y << " " << _x << _y << endl;
+    plain[x][y] = idx;
+    plain[_x][_y] = idx;
+
+    v.push_back(Point(x,y));
+    v.push_back(Point(_x,_y));
+
+    makePointProcess(_x, _y, g);
+}
+
+void dfs(int x, int y){
+    dfs()
 }
 
 int main() {
     int d = 0;
+    sp.push_back(Point(0,0)); //dummy
     cin >> n;
     for(int i=0; i < n; i++) {
+        idx++;
+        int x, y, d, g;
         
-        cin >> sx[i] >> sy[i] >> sd[i] >> sg[i];
-        
+        cin >> x >> y >> d >> g;
+        makeFirstPoint(x, y, d, g);
     }
-    
 
-
-
+    for(int i=1; i <= idx; i++){
+        dfs(sp[i].x, sp[i].y);
+    }
+    printPlain();
     return 0;
 }
