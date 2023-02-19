@@ -1,49 +1,43 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 
-int n;
-int p[20][20] = {0};
-bool arr[20] = {0};
-int mmin = 2147483647;
+int n, m;
 
-void getmin(){
-    int tsum = 0;
-    int fsum = 0;
-    for(int i=0; i < n; i++){
-        for(int j=0; j < n; j++){
-            if(arr[i] == arr[j]){
-                if(arr[i]) tsum += p[i][j];
-                else fsum += p[i][j];
-            }
-        }
-    }
-    int cmin = abs(fsum - tsum);
-    if(cmin < mmin) mmin = cmin;
+int x1 = 50, x2 = 0, y1 = 50, y2 = 0; // singular circle
+int plain[50][50] = {0};
+int hospitalx[13];
+int hospitaly[13];
+int hospitals[13];
+int patientx[13];
+int patienty[13];
+int hospitali = 0, patienti = 0;
+
+void makeSingularRect(int x, int y){
+    patientx = x; patienty = y;
+    patienti++;
+    if(x < x1) x1 = x;
+    else if(x > x2) x2 = x;
+    if(y < y1) y1 = y;
+    else if(y > y2) y2 = y;
 }
 
-void dfs(int idx, bool flag, int truenum){
-    int maxtruenum = n - idx + truenum;
-    if(maxtruenum < n/2) return; //halt
-    if(idx >= n){ //halt
-        getmin();
-        return;
-    }
-    arr[idx++] = flag; //apply
-    if(flag) truenum++;
-    if(truenum < n/2) dfs(idx, true, truenum);
-    dfs(idx, false, truenum);
+void makeHospitalScore(){
+    
 }
 
 int main() {
-    cin >> n;
-    for(int i=0; i < n; i++){
-        for(int j=0; j < n; j++){
-            cin >> p[i][j];
+
+    cin >> n >> m;
+    int flag = true;
+    int input;
+
+    for(int i=0; i< n; i++){
+        for(int j=0; j<n; j++) {
+            cin >> input;
+            if(input == 1) makeSingularRect(i, j);
+            else if(input == 2) {hospitalx = i; hospitaly = j; hospitali++;}
         }
     }
-    
-    dfs(0, true, 0);
-
-    cout << mmin;
     return 0;
 }
